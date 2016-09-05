@@ -1,3 +1,12 @@
 *.b#*
 *.pdf
 *.s#*
+*.cof
+*.err
+*.lst
+*.map
+*.mcs
+*.sbs
+*.mcp
+*.mcw
+*.o
