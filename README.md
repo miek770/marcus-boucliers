@@ -11,27 +11,33 @@
   - À compléter
 
 ## Borniers d'interface
+
 - TB0 : Alimentation
+
   - 1. Masse
   - 2. V+
+
 - TB1 : Contrôleur
-  - 3. Mort
-  - 4. Bouclier 1
-  - 5. Bouclier 2
-  - 6. Bouclier 3
-  - 7. Bouclier 4
-  - 8. Réinitialise
-  - 9. RB7
-  - 10. N/C
+
+  - 1. Mort
+  - 2. Bouclier 1
+  - 3. Bouclier 2
+  - 4. Bouclier 3
+  - 5. Bouclier 4
+  - 6. Réinitialise
+  - 7. RB7
+  - 8. Gnd
+
 - TB2 : Boucliers
-  - 11. Bouclier 1A
-  - 12. Bouclier 1B
-  - 13. Bouclier 2A
-  - 14. Bouclier 2B
-  - 15. Bouclier 3A
-  - 16. Bouclier 3B
-  - 17. Bouclier 4A
-  - 18. Bouclier 4B
+
+  - 1. Bouclier 1A
+  - 2. Bouclier 1B
+  - 3. Bouclier 2A
+  - 4. Bouclier 2B
+  - 5. Bouclier 3A
+  - 6. Bouclier 3B
+  - 7. Bouclier 4A
+  - 8. Bouclier 4B
 
 ### TB0 – Alimentation
 
@@ -74,3 +80,16 @@ En résumé, il reste des tests à faire mais il faudra simplement ajuster les 2
 Les points de vie, à l'état initial, sont définis par la configuration d'un interrupteur DIP à 6 positions alors que le circuit est non-alimenté.
 Chaque impact détecté abaisse la quantité de points de vie de 1, jusqu'à ce qu'elle atteigne 0.
 La borne 3 « Mort » passe alors à 1 et le circuit doit être réinitialisé par la méthode décrite en 2.2.1.
+
+# Débuggage
+
+Ok, quelques observations. Il y a quelques erreurs sur le circuit et je crois que :
+
+1. Mon schéma n'était pas à jour (il y a plusieurs erreurs);
+2. Mon programme n'était pas à jour.
+
+Donc à part les améliorations dont j'ai déjà pris note, tel que le connecteur pour le PICkit2, j'ai remarqué que la pin MCLR n'est pas normalement liée à Vdd mais bien à Gnd. Donc plutôt que de mettre le PIC en marche elle le maintien arrêté.
+
+Aaaaaaah je crois que ça fonctionne! J'ai inversé la LED dans mon code, elle est allumée lorsque le robot est en vie et s'éteint lorsqu'il est mort! Wow, nice! Aaaaah! Et avec le "goto $" quand il est mort la LED reste éteinte, la pin de détection reste à ON et c'est normal!
+
+Donc si le circuit était bien fait, je pourrais resetter avec le bouton. Mais même ainsi, je peux resetter en mettant RA5 à Vdd!

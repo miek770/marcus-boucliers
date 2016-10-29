@@ -5,7 +5,7 @@
 ;
 ;	Créé le :		7 novembre 2010
 ;	Par :			Michel Lavoie
-;	Modifié le :	7 novembre 2010
+;	Modifié le :	27 octobre 2016
 ;	Par :			Michel Lavoie
 ;============================================================================
 ;	Description :	Ceci est le code du microcontrolleur PIC assurant la
@@ -44,10 +44,10 @@
 	errorlevel -302
 	errorlevel -305
 
-    __CONFIG    _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & _CP_OFF & _MCLRE_ON & _PWRTE_OFF & _WDT_OFF & _INTRC_OSC_NOCLKOUT
+    __CONFIG    _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & _CP_OFF & _MCLRE_OFF & _PWRTE_OFF & _WDT_OFF & _INTRC_OSC_NOCLKOUT
 
 ; example of using Shared Uninitialized Data Section
-INT_VAR		UDATA_SHR   
+INT_VAR		UDATA_SHR
 w_temp		RES		1			; variable used for context saving
 status_temp RES		1			; variable used for context saving
 pclath_temp RES		1			; variable used for context saving
@@ -85,7 +85,7 @@ INT_VECTOR		CODE	0x0004	; interrupt vector location
 	banksel	PORTB
 	bcf		PORTB,4				; RB4  S - Bouclier 4
 
-quit_interrupt
+quit_interrupt:
 	bcf		INTCON,RABIF		; Réinitialise RABIF
     movf    pclath_temp,w		; retrieve copy of PCLATH register
     movwf   PCLATH				; restore pre-isr PCLATH register contents
@@ -99,15 +99,15 @@ quit_interrupt
 MAIN_PROG		CODE
 ;============================================================================
 
-depart
+depart:
 ; Configuration du port A
 	banksel	PORTA
 	clrf	PORTA
 	banksel	TRISA
-	movlw	b'00111111'			; | - | - |TRISA5|TRISA4|TRISA3|TRISA2|TRISA1|TRISA0|
+	movlw	b'00111111'     ; | - | - |TRISA5|TRISA4|TRISA3|TRISA2|TRISA1|TRISA0|
 	movwf	TRISA
 	banksel	IOCA
-	movlw	b'00100000'			; | - | - |IOCA5|IOCA4|IOCA3|IOCA2|IOCA1|IOCA0|
+	movlw	b'00100000'     ; | - | - |IOCA5|IOCA4|IOCA3|IOCA2|IOCA1|IOCA0|
 	movwf	IOCA
 	banksel	ANSEL
 	clrf	ANSEL
@@ -118,7 +118,7 @@ depart
 	banksel PORTB
 	clrf	PORTB
 	banksel	TRISB
-	movlw	b'11100000'			; |TRISB7|TRISB6|TRISB5|TRISB4| - | - | - | - |
+	movlw	b'11100000'		; |TRISB7|TRISB6|TRISB5|TRISB4| - | - | - | - |
 	movwf	TRISB
 	banksel IOCB
 	clrf	IOCB
@@ -127,12 +127,16 @@ depart
 	banksel	PORTC
 	clrf	PORTC
 	banksel	TRISC
-	movlw	b'00001111'			; |TRISC7|TRISC6|TRISC5|TRISC4|TRISC3|TRISC2|TRISC1|TRISC0|
+	movlw	b'00001111'     ; |TRISC7|TRISC6|TRISC5|TRISC4|TRISC3|TRISC2|TRISC1|TRISC0|
 	movwf	TRISC
+
+; Allume la LED au démarrage
+    banksel	PORTC
+	bsf		PORTC,4				; RC4  S - En vie!
 
 ; Configuration de la routine d'interruption
 	banksel	INTCON
-	movlw	b'10001000'			; |GIE|PEIE|T0IE|INTE|RABIE|T0IF|INTF|RABIF|
+	movlw	b'10001000'		; |GIE|PEIE|T0IE|INTE|RABIE|T0IF|INTF|RABIF|
 	movwf	INTCON
 
 ; Relève le nombre de vies à utiliser
@@ -141,7 +145,7 @@ depart
 ; Boucle principale
 	banksel	PORTA
 
-main_loop
+main_loop:
 	btfsc	PORTA,0				; Test RA0  E - Bouclier 1
 	call	subB1_touche
 	btfsc	PORTA,1				; Test RA1  E - Bouclier 2
@@ -160,17 +164,17 @@ main_loop
 ; Routine :		subB1_touche
 ; Description : Actions à prendre après un impact sur le bouclier 1.
 ;============================================================================
-subB1_touche
+subB1_touche:
 	banksel	vies
 	decfsz	vies				; Soustrait une vie
 	goto b1_vivant
 
 	; Le robot n'a plus de vies
 	banksel	PORTC
-	bsf		PORTC,4				; RC4  S - Mort
+	bcf		PORTC,4				; RC4  S - Mort
 	goto	$					; Boucle infinie. À changer avec redémarrage.
 
-b1_vivant
+b1_vivant:
 	banksel	PORTC
 	bsf		PORTC,5				; RC5  S - Bouclier 1
 	call	subDelai_100ms
@@ -181,17 +185,17 @@ b1_vivant
 ; Routine :		subB2_touche
 ; Description : Actions à prendre après un impact sur le bouclier 2.
 ;============================================================================
-subB2_touche
+subB2_touche:
 	banksel	vies
 	decfsz	vies				; Soustrait une vie
 	goto b2_vivant
 
 	; Le robot n'a plus de vies
 	banksel	PORTC
-	bsf		PORTC,4				; RC4  S - Mort
+	bcf		PORTC,4				; RC4  S - Mort
 	goto	$					; Boucle infinie. À changer avec redémarrage.
 
-b2_vivant
+b2_vivant:
 	banksel	PORTC
 	bsf		PORTC,6				; RC6  S - Bouclier 2
 	call	subDelai_100ms
@@ -202,17 +206,17 @@ b2_vivant
 ; Routine :		subB3_touche
 ; Description : Actions à prendre après un impact sur le bouclier 3.
 ;============================================================================
-subB3_touche
+subB3_touche:
 	banksel	vies
 	decfsz	vies				; Soustrait une vie
 	goto b3_vivant
 
 	; Le robot n'a plus de vies
 	banksel	PORTC
-	bsf		PORTC,4				; RC4  S - Mort
+	bcf		PORTC,4				; RC4  S - Mort
 	goto	$					; Boucle infinie. À changer avec redémarrage.
 
-b3_vivant
+b3_vivant:
 	banksel	PORTC
 	bsf		PORTC,7				; RC7  S - Bouclier 3
 	call	subDelai_100ms
@@ -223,17 +227,17 @@ b3_vivant
 ; Routine :		subB4_touche
 ; Description : Actions à prendre après un impact sur le bouclier 4.
 ;============================================================================
-subB4_touche
+subB4_touche:
 	banksel	vies
 	decfsz	vies				; Soustrait une vie
 	goto b4_vivant
 
 	; Le robot n'a plus de vies
 	banksel	PORTC
-	bsf		PORTC,4				; RC4  S - Mort
+	bcf		PORTC,4				; RC4  S - Mort
 	goto	$					; Boucle infinie. À changer avec redémarrage.
 
-b4_vivant
+b4_vivant:
 	banksel	PORTB
 	bsf		PORTB,4				; RB4  S - Bouclier 4
 	call	subDelai_100ms
@@ -244,12 +248,12 @@ b4_vivant
 ; Routine :		subDelai_100ms
 ; Description :	Provoque un délai de 100ms dans l'exécution du code.
 ;============================================================================
-subDelai_100ms
+subDelai_100ms:
 	banksel	0
 	movlw	.97					; (N*1026 + 5) us
 	movwf	dc2
 	clrf	dc1
-looDelai_100ms
+looDelai_100ms:
 	nop
 	decfsz	dc1,f
 	goto	looDelai_100ms
@@ -261,22 +265,22 @@ looDelai_100ms
 ; Routine :		subCompte_vies
 ; Description :	Compte de nombre de vies maximales.
 ;============================================================================
-subCompte_vies
+subCompte_vies:
 	clrw
 	banksel	PORTC
 	btfsc	PORTC,0				; Test RC0  E - DIP 1
-	addlw	b'00000001'
+	addlw	b'00100000'
 	btfsc	PORTC,1				; Test RC1  E - DIP 2
-	addlw	b'00000010'
+	addlw	b'00010000'
 	btfsc	PORTC,2				; Test RC2  E - DIP 3
-	addlw	b'00000100'
-	btfsc	PORTC,3				; Test RC3  E - DIP 4
 	addlw	b'00001000'
+	btfsc	PORTC,3				; Test RC3  E - DIP 4
+	addlw	b'00000100'
 	banksel	PORTB
 	btfsc	PORTB,5				; Test RB5  E - DIP 5
-	addlw	b'00010000'
+	addlw	b'00000010'
 	btfsc	PORTB,6				; Test RB6  E - DIP 6
-	addlw	b'00100000'
+	addlw	b'00000001'
 	movwf	vies
 	return
 
