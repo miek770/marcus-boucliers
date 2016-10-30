@@ -27,9 +27,9 @@
 ## 3. Borniers d'interface
 
 - TB0 : Alimentation
-  - 1. Masse
-  - 2. V+
-- TB1 : Contrôleur
+  - 1. Gnd
+  - 2. 5V
+- TB1 : Interface contrôleur
   - 1. Mort
   - 2. Bouclier 1
   - 3. Bouclier 2
@@ -38,15 +38,15 @@
   - 6. Réinitialise
   - 7. RB7
   - 8. Gnd
-- TB2 : Boucliers
-  - 1. Bouclier 1A
-  - 2. Bouclier 1B
-  - 3. Bouclier 2A
-  - 4. Bouclier 2B
-  - 5. Bouclier 3A
-  - 6. Bouclier 3B
-  - 7. Bouclier 4A
-  - 8. Bouclier 4B
+- TB2 : Interface boucliers
+  - 1. Bouclier 1
+  - 2. Gnd
+  - 3. Bouclier 2
+  - 4. Gnd
+  - 5. Bouclier 3
+  - 6. Gnd
+  - 7. Bouclier 4
+  - 8. Gnd
 
 ### 3.1 TB0 – Alimentation
 
