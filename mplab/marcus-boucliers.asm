@@ -1,11 +1,13 @@
-list    p=16f677            ; list directive to define processor
-#include <p16f677.inc>      ; processor specific variable definitions
+; marcus-boucliers.asm
+
+    list    p=16f677            ; list directive to define processor
+    #include <p16f677.inc>      ; processor specific variable definitions
 
 ; Désactive quelques avertissements inutiles
-errorlevel -302
-errorlevel -305
+    errorlevel -302
+    errorlevel -305
 
-__CONFIG    _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & _CP_OFF & _MCLRE_OFF & _PWRTE_OFF & _WDT_OFF & _INTRC_OSC_NOCLKOUT
+    __CONFIG    _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & _CP_OFF & _MCLRE_OFF & _PWRTE_OFF & _WDT_OFF & _INTRC_OSC_NOCLKOUT
 
 ; example of using Shared Uninitialized Data Section
 INT_VAR     UDATA_SHR
@@ -57,7 +59,7 @@ quit_interrupt:
     retfie                  ; return from interrupt
 
 ;============================================================================
-MAIN_PROG   CODE    0x0005  ; program memory
+MAIN_PROG   CODE            ; program memory
 ;============================================================================
 
 depart:
