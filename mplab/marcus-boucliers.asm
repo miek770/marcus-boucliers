@@ -3,7 +3,7 @@
     list    p=16f677            ; list directive to define processor
     #include <p16f677.inc>      ; processor specific variable definitions
 
-; Désactive quelques avertissements inutiles
+    ; Désactive quelques avertissements inutiles
     errorlevel -302
     errorlevel -305
 

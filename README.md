@@ -23,6 +23,7 @@
   - 0-5 Vcc (TTL)
 - Temps de réaction
   - À compléter
+- Fréquence : 4MHz
 
 ## 3. Borniers d'interface
 
