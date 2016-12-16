@@ -1,4 +1,4 @@
-# Description fonctionnelle du circuit standard des boucliers
+# Marcus - Circuit standard des boucliers
 
 ## 1. Améliorations pour la prochaine version
 
